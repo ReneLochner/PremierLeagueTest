@@ -52,6 +52,7 @@ namespace PremierLeague.Persistence
     /// <param name="entity"></param>
     private async Task ValidateEntityAsync(object entity)
     {
+      /*
       if (entity is Game game)
       {
         throw new NotImplementedException("DB-Validierungen für Game implementieren!");
@@ -60,6 +61,7 @@ namespace PremierLeague.Persistence
       {
         throw new NotImplementedException("DB-Validierungen für Team implementieren!");
       }
+      */
     }
   }
 }
