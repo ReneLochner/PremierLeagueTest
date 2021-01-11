@@ -11,6 +11,27 @@
         WindowStyle="ThreeDBorderWindow" BorderThickness="2" 
         BorderBrush="{DynamicResource {x:Static SystemColors.ActiveCaptionBrushKey}}"
         Title="Premierleague" Height="650" Width="750">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
 
-   
+        <DataGrid Grid.Row="0" ItemsSource="{Binding Games}" SelectedItem="SelectedTeam" IsReadOnly="True" AutoGenerateColumns="False">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Rank" Binding="{Binding Path=Rank}" />
+                <DataGridTextColumn Header="Name" Binding="{Binding Path=Name}" />
+                <DataGridTextColumn Header="Matches" Binding="{Binding Path=Matches}" />
+                <DataGridTextColumn Header="Won" Binding="{Binding Path=Won}" />
+                <DataGridTextColumn Header="Drawn" Binding="{Binding Path=Drawn}" />
+                <DataGridTextColumn Header="Lost" Binding="{Binding Path=Lost}" />
+                <DataGridTextColumn Header="+" Binding="{Binding Path=GoalsShot}" />
+                <DataGridTextColumn Header="-" Binding="{Binding Path=GoalsGotten}" />
+                <DataGridTextColumn Header="+/-" Binding="{Binding Path=GoalDifference}" />
+                <DataGridTextColumn Header="Points" Binding="{Binding Path=Points}" />
+            </DataGrid.Columns>
+        </DataGrid>
+
+        <Button Grid.Row="1" Command="{Binding CmdAddGame}">Add Game</Button>
+    </Grid>
 </controls:MetroWindow>

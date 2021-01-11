@@ -1,4 +1,5 @@
-﻿using PremierLeague.Core.DataTransferObjects;
+﻿using PremierLeague.Core.Contracts;
+using PremierLeague.Core.DataTransferObjects;
 using PremierLeague.Persistence;
 using PremierLeague.Wpf.Common;
 using PremierLeague.Wpf.Common.Contracts;
@@ -12,41 +13,84 @@ using System.Windows.Input;
 
 namespace PremierLeague.Wpf.ViewModels
 {
-  public class MainViewModel : BaseViewModel
-  {
-    public MainViewModel(IWindowController windowController) : base(windowController)
+    public class MainViewModel : BaseViewModel
     {
-      LoadCommands();
-    }
+        private ObservableCollection<TeamTableRowDto> _games;
+        private ICommand _cmdAddGame;
 
-    /// <summary>
-    /// Erstellt die notwendigen Commands.
-    /// </summary>
-    private void LoadCommands()
-    {
-      throw new NotImplementedException();
-    }
+        public ObservableCollection<TeamTableRowDto> Games
+        {
+            get => _games;
+            set
+            {
+                _games = value;
+                OnPropertyChanged(nameof(Games));
+            }
+        }
+        public ICommand CmdAddGame
+        {
+            get
+            {
+                if (_cmdAddGame == null)
+                {
+                    _cmdAddGame = new RelayCommand(
+                        execute: _ =>
+                        {
+                            Controller.ShowWindow(new AddGameViewModel(Controller), true);
+                            _ = LoadDataAsync();
+                        },
+                    canExecute: _ => true
+                    );
+                }
 
-    /// <summary>
-    /// Asynchrones Laden von Daten für das ViewModel.
-    /// Wird in CreateAsync(..) aufgerufen.
-    /// </summary>
-    /// <returns></returns>
-    private async Task LoadDataAsync()
-    {
-      throw new NotImplementedException();
-    }
+                return _cmdAddGame;
+            }
+            set
+            {
+                _cmdAddGame = value;
+            }
+        }
 
-    public override IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
-    {
-      throw new NotImplementedException();
-    }
+        public MainViewModel(IWindowController windowController) : base(windowController)
+        {
+            LoadCommands();
+        }
 
-    public static async Task<MainViewModel> CreateAsync(IWindowController windowController)
-    {
-      var viewModel = new MainViewModel(windowController);
-      await viewModel.LoadDataAsync();
-      return viewModel;
+        /// <summary>
+        /// Erstellt die notwendigen Commands.
+        /// </summary>
+        private void LoadCommands()
+        {
+        }
+
+        /// <summary>
+        /// Asynchrones Laden von Daten für das ViewModel.
+        /// Wird in CreateAsync(..) aufgerufen.
+        /// </summary>
+        /// <returns></returns>
+        private async Task LoadDataAsync()
+        {
+            using IUnitOfWork uow = new UnitOfWork();
+            var games = await uow.Games.GetAllAsync();
+
+            Games = new ObservableCollection<TeamTableRowDto>();
+            foreach (var game in games)
+            {
+                Games.Add(game);
+
+            }
+        }
+
+        public override IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
+        {
+            yield return ValidationResult.Success;
+        }
+
+        public static async Task<MainViewModel> CreateAsync(IWindowController windowController)
+        {
+            var viewModel = new MainViewModel(windowController);
+            await viewModel.LoadDataAsync();
+            return viewModel;
+        }
     }
-  }
 }
